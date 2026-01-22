@@ -30,7 +30,7 @@ fn parse_prompt_args(args: &Vec<String>, default_mode: Mode) -> Prompt {
             None => prompt_words.push(arg.to_string())
         }
     }
-    return Prompt{prompt: prompt_words.join(" ").to_string(), mode: mode, flags: extra_flags}
+    Prompt{prompt: prompt_words.join(" ").to_string(), mode: mode, flags: extra_flags}
 }
 
 fn parse_flag_str(arg: &String) -> Option<&str> {

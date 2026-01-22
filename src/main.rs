@@ -2,23 +2,31 @@ mod parser;
 mod types;
 mod client;
 mod commands;
+mod settings;
 
 use parser::parse_args;
 use types::Command;
-use types::Mode;
+use settings::Settings;
+use commands::init;
+use dirs::config_local_dir;
+use std::path::PathBuf;
 
 fn main() {
     println!("Welcome to nelson");
 
+    let config_file_path: PathBuf = get_config_file_path();
+
+    let settings: Settings = Settings::load(&config_file_path);
+
     let args: Vec<String> = std::env::args().skip(1).collect();
 
-    let command: Command = parse_args(args, Mode::Cmd);
+    let command: Command = parse_args(args, settings.prompt.default_mode);
 
     println!("Got command: {:?}", command);
 
     match command {
         Command::Wtf => return,
-        Command::InitCmd => return,
+        Command::InitCmd => return init(&config_file_path),
         Command::NoCommand => return,
         Command::Prompt(_prompt) => ()
     }
@@ -34,4 +42,11 @@ fn main() {
     //
     //
 } 
+
+fn get_config_file_path() -> PathBuf {
+    let mut configs_path: PathBuf = config_local_dir().unwrap();
+    configs_path.push("nelson");
+    configs_path.push("config.toml");
+    return configs_path;
+}
 

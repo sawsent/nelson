@@ -1,4 +1,6 @@
-#[derive(Debug, PartialEq, Eq)]
+use serde::{Serialize, Deserialize};
+
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Mode {
     Neat,
     Long,
@@ -37,3 +39,4 @@ pub enum Command {
     InitCmd,
     NoCommand
 }
+
