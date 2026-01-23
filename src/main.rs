@@ -24,17 +24,21 @@ fn main() {
 
     let config_file_path = get_config_file_path(&ctx);
 
+
     let settings: Settings = settings::load(&config_file_path, &ctx);
     ctx.vprint(format_args!("Using settings: {:?}", settings));
 
-    let command: Command = parser::parse_args(&args, settings.prompt.default_mode);
+    let command: Command = parser::parse_args(&args, settings.prompt.default_mode.clone());
     ctx.vprint(format_args!("Got command: {:?}", command));
 
     match command {
         Command::Wtf => return,
         Command::InitCmd => return init(&config_file_path, &ctx),
         Command::NoCommand => return,
-        Command::Prompt(_prompt) => (),
+        Command::Prompt(prompt) => {
+            let response = client::query_prompt(&prompt, &settings, &ctx);
+            println!("{:#?}", response);
+        }
     }
     // Parse console args
 

@@ -14,12 +14,12 @@ pub fn parse_args(args: &Vec<String>, default_mode: Mode) -> Command {
 pub fn split_args_and_flags(args: &Vec<String>) -> (Vec<String>, HashSet<Flag>) {
     let mut flags: HashSet<Flag> = HashSet::new();
     let mut args_without_flags: Vec<String> = Vec::new();
-    for arg in args.get(1..).unwrap_or(&[]).to_vec() {
+    for arg in args {
         match parse_flag(&arg) {
             Some(flag) => {
                 flags.insert(flag);
             }
-            None => args_without_flags.push(arg)
+            None => args_without_flags.push(arg.to_string())
         }
     }
     return (args_without_flags, flags);

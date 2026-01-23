@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
+#[derive(Debug, PartialEq, Eq, Serialize, Deserialize, Clone)]
 pub enum Mode {
     Neat,
     Long,
@@ -33,3 +33,19 @@ pub enum Command {
     InitCmd,
     NoCommand,
 }
+
+#[derive(Debug)]
+pub struct LLMResponse {
+    text: String
+}
+impl LLMResponse {
+    pub fn new(text: &'static str) -> Self {
+        Self {
+            text: text.to_string()
+        }
+    }
+    pub fn get_text(&self) -> String {
+        self.text.clone()
+    }
+}
+

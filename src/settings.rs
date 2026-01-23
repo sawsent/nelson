@@ -6,19 +6,19 @@ use toml;
 use crate::context::Context;
 use crate::types::Mode;
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Settings {
     pub llm: LlmSettings,
     pub prompt: PromptSettings,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct LlmSettings {
     pub host: String,
     pub port: u16,
 }
 
-#[derive(Debug, Serialize, Deserialize)]
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct PromptSettings {
     pub default_mode: Mode,
 }
@@ -27,8 +27,8 @@ impl Default for Settings {
     fn default() -> Self {
         Self {
             llm: LlmSettings {
-                host: "127.0.0.1".to_string(),
-                port: 8080,
+                host: "localhost".to_string(),
+                port: 11434,
             },
             prompt: PromptSettings {
                 default_mode: Mode::Neat,
