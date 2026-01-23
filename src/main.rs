@@ -15,19 +15,19 @@ use types::Command;
 fn main() {
     let mut context_builder = ContextBuilder::new();
 
-    let args: &Vec<String> = &std::env::args().skip(1).collect();
+    let (args, flags) = parser::split_args_and_flags(&std::env::args().skip(1).collect());
 
-    context_builder.add_flags(&parser::parse_flags(args));
+    context_builder.add_flags(&flags);
     let ctx = context_builder.build();
     ctx.vprint(format_args!("verbose mode is ON"));
     ctx.vprint(format_args!("Built context: {:?}", ctx));
 
     let config_file_path = get_config_file_path(&ctx);
 
-    let settings: Settings = Settings::load(&config_file_path, &ctx);
+    let settings: Settings = settings::load(&config_file_path, &ctx);
     ctx.vprint(format_args!("Using settings: {:?}", settings));
 
-    let command: Command = parser::parse(args, settings.prompt.default_mode);
+    let command: Command = parser::parse_args(&args, settings.prompt.default_mode);
     ctx.vprint(format_args!("Got command: {:?}", command));
 
     match command {

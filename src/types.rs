@@ -11,10 +11,10 @@ pub enum Mode {
 impl Mode {
     pub fn from_string(flag: &str) -> Option<Mode> {
         match flag {
-            "neat" | "n" => Some(Mode::Neat),
-            "long" | "l" => Some(Mode::Long),
-            "code" | "c" => Some(Mode::Code),
-            "cmd" => Some(Mode::Cmd),
+            "--neat" | "-n" => Some(Mode::Neat),
+            "--long" | "-l" => Some(Mode::Long),
+            "--code" | "-c" => Some(Mode::Code),
+            "--cmd" => Some(Mode::Cmd),
             _ => None,
         }
     }
