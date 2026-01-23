@@ -1,26 +1,21 @@
-use serde::{Serialize, Deserialize};
+use serde::{Deserialize, Serialize};
 
 #[derive(Debug, PartialEq, Eq, Serialize, Deserialize)]
 pub enum Mode {
     Neat,
     Long,
     Cmd,
-    Code
+    Code,
 }
 
-
 impl Mode {
-    pub fn from_flag(flag: &str) -> Option<Mode> {
-        if flag == "neat" || flag == "n" {
-            return Some(Mode::Neat)
-        } else if flag == "long" || flag == "l" {
-            return Some(Mode::Long)
-        } else if flag == "code" || flag == "c" {
-            return Some(Mode::Code)
-        } else if flag == "cmd" {
-            return Some(Mode::Cmd)
-        } else {
-            return None
+    pub fn from_string(flag: &str) -> Option<Mode> {
+        match flag {
+            "neat" | "n" => Some(Mode::Neat),
+            "long" | "l" => Some(Mode::Long),
+            "code" | "c" => Some(Mode::Code),
+            "cmd" => Some(Mode::Cmd),
+            _ => None,
         }
     }
 }
@@ -29,7 +24,6 @@ impl Mode {
 pub struct Prompt {
     pub mode: Mode,
     pub prompt: String,
-    pub flags: Vec<String>
 }
 
 #[derive(Debug, PartialEq, Eq)]
@@ -37,6 +31,5 @@ pub enum Command {
     Prompt(Prompt),
     Wtf,
     InitCmd,
-    NoCommand
+    NoCommand,
 }
-
