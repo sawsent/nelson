@@ -5,6 +5,8 @@ mod parser;
 mod settings;
 mod types;
 mod dto;
+mod backend;
+mod errors;
 
 use commands::init;
 use context::{Context, ContextBuilder};
@@ -29,11 +31,10 @@ fn main() {
 
     let config_file_path = get_config_file_path(&ctx);
 
-
-    let settings: Settings = settings::load(&config_file_path, &ctx);
+    let settings: Settings = settings::load(&config_file_path, Settings::default(), &ctx);
     ctx.vprint(format_args!("Using settings: {:?}", settings));
 
-    let command: Command = parser::parse_args(&args, &settings.prompt.default_mode);
+    let command: Command = parser::parse_args(&args, &settings.nelson.default_mode);
     ctx.vprint(format_args!("Got command: {:?}", command));
 
     match command {

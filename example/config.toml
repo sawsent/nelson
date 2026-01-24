@@ -1,4 +1,5 @@
 [backend]
+# [ollama]
 provider = "ollama"
 host = "localhost"
 port = 11434

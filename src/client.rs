@@ -1,6 +1,6 @@
 use crate::types::{LLMResponse, Prompt, Mode};
 use crate::context::Context;
-use crate::settings::{Settings, LlmSettings};
+use crate::settings::{Settings, BackendSettings};
 use serde::{Serialize, Deserialize};
 use reqwest;
 
@@ -52,7 +52,7 @@ fn query(system_prompt: &String, prompt: &String, settings: &Settings, ctx: &Con
     
 
     let response = client
-        .post(get_url(&settings.llm))
+        .post(get_url(&settings.backend))
         .json(&payload)
         .send()?;
 
@@ -62,7 +62,7 @@ fn query(system_prompt: &String, prompt: &String, settings: &Settings, ctx: &Con
     Ok(LLMResponse::new(""))
 }
 
-fn get_url(settings: &LlmSettings) -> String {
+fn get_url(settings: &BackendSettings) -> String {
     format!(
         "http://{}:{}/api/chat",
         settings.host,
