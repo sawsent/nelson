@@ -1,0 +1,12 @@
+[backend]
+provider = "ollama"
+host = "localhost"
+port = 11434
+
+[llm]
+model = "llama3.2"
+
+[nelson]
+# ["cmd", "neat", "long", "code"]
+default_mode = "cmd"
+

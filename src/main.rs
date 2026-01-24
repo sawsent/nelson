@@ -4,6 +4,7 @@ mod context;
 mod parser;
 mod settings;
 mod types;
+mod dto;
 
 use commands::init;
 use context::{Context, ContextBuilder};
@@ -15,9 +16,13 @@ use types::Command;
 fn main() {
     let mut context_builder = ContextBuilder::new();
 
-    let (args, flags) = parser::split_args_and_flags(&std::env::args().skip(1).collect());
+    let full_args: Vec<String> = std::env::args().skip(1).collect();
+    let full_cmd = "nelson ".to_string() + &full_args.join(" ");
+    context_builder.set_cmd(&full_cmd);
 
+    let (args, flags) = parser::split_args_and_flags(&full_args);
     context_builder.add_flags(&flags);
+
     let ctx = context_builder.build();
     ctx.vprint(format_args!("verbose mode is ON"));
     ctx.vprint(format_args!("Built context: {:?}", ctx));
@@ -28,7 +33,7 @@ fn main() {
     let settings: Settings = settings::load(&config_file_path, &ctx);
     ctx.vprint(format_args!("Using settings: {:?}", settings));
 
-    let command: Command = parser::parse_args(&args, settings.prompt.default_mode.clone());
+    let command: Command = parser::parse_args(&args, &settings.prompt.default_mode);
     ctx.vprint(format_args!("Got command: {:?}", command));
 
     match command {
@@ -57,9 +62,6 @@ fn get_config_file_path(ctx: &Context) -> PathBuf {
     config_local_dir()
         .map(|mut p| {
             p.push("nelson");
-            p
-        })
-        .map(|mut p| {
             p.push("config.toml");
             p
         })

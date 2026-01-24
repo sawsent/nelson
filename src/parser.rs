@@ -2,7 +2,7 @@ use crate::types::{Command, Mode, Prompt};
 use crate::context::Flag;
 use std::collections::HashSet;
 
-pub fn parse_args(args: &Vec<String>, default_mode: Mode) -> Command {
+pub fn parse_args(args: &Vec<String>, default_mode: &Mode) -> Command {
     match args.get(0) {
         Some(s) if s == "init" && has_only_flags(&args) => return Command::InitCmd,
         Some(s) if s == "wtf" && has_only_flags(&args) => return Command::Wtf,
@@ -34,9 +34,9 @@ fn has_only_flags(args: &Vec<String>) -> bool {
     true
 }
 
-fn parse_prompt_args(args: &Vec<String>, default_mode: Mode) -> Prompt {
+fn parse_prompt_args(args: &Vec<String>, default_mode: &Mode) -> Prompt {
     let mut prompt_words: Vec<String> = Vec::new();
-    let mut mode: Mode = default_mode;
+    let mut mode: Mode = default_mode.clone();
 
     for arg in args {
         if let Some(m) = Mode::from_string(arg) {
