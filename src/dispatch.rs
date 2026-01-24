@@ -4,7 +4,19 @@ use std::path::PathBuf;
 use crate::context::Context;
 use crate::settings::{Settings};
 use crate::utils::save_settings;
-use crate::domain::Init;
+use crate::domain::{Init, Prompt};
+use crate::backend::Backend;
+
+pub fn prompt<T: Backend>(cmd: &Prompt, backend: &T, settings: &Settings, ctx: &Context) {
+
+    let result = backend.query(&"".to_string(), &cmd.prompt, &settings.llm.model, ctx);
+
+    match result {
+        Ok(resp) => println!("{}", resp),
+        Err(nerr) => println!("{}", nerr)
+    }
+
+}
 
 pub fn init(_cmd: &Init, fp: &PathBuf, ctx: &Context) {
     println!("initializing nelson config at {:?}", fp);

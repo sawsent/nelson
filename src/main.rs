@@ -12,6 +12,7 @@ use context::{Context, ContextBuilder};
 use domain::Command;
 use settings::Settings;
 use std::path::PathBuf;
+use crate::backend::ollama::OllamaBackend;
 
 fn main() {
     let mut context_builder = ContextBuilder::new();
@@ -31,6 +32,8 @@ fn main() {
     let settings: Settings = utils::load_settings(&config_file_path, Settings::default(), &ctx);
     ctx.vprint(format_args!("Using settings: {:?}", settings));
 
+    let backend = OllamaBackend::new(&settings.backend.host, settings.backend.port);
+
     let command: Command = parser::parse_args(&args, &settings.nelson.default_mode);
     ctx.vprint(format_args!("Got command: {:?}", command));
 
@@ -42,7 +45,7 @@ fn main() {
     match command {
         Command::WtfCmd(_wtf) => return,
         Command::InitCmd(init) => return dispatch::init(&init, &config_file_path, &ctx),
-        Command::Prompt(_prompt) => {}
+        Command::Prompt(prompt) => return dispatch::prompt(&prompt, &backend, &settings, &ctx),
         Command::NoCmd => suggest_help("".to_string()),
     }
 
