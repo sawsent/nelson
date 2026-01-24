@@ -4,7 +4,7 @@ use std::path::PathBuf;
 use toml;
 
 use crate::context::Context;
-use crate::types::Mode;
+use crate::domain::Mode;
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct Settings {
@@ -39,11 +39,11 @@ impl Default for Settings {
                 port: 11434,
             },
             llm: LlmSettings {
-                model: "llama3.2".to_string()
+                model: "llama3.2".to_string(),
             },
             nelson: NelsonSettings {
                 default_mode: Mode::Cmd,
-            }
+            },
         }
     }
 }

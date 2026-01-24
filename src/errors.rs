@@ -13,7 +13,7 @@ impl fmt::Display for NelsonError {
     fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
         match self {
             NelsonError::Internal(err) => {
-                write!(f, "internal nelson error: {}", err)
+                write!(f, "Internal nelson error: {}", err)
             }
 
             NelsonError::BackendUnreachable(host, port) => {
@@ -55,12 +55,8 @@ impl fmt::Display for NelsonError {
             }
 
             NelsonError::EmptyResponse => {
-                write!(
-                    f,
-                    "The model returned no output."
-                )
+                write!(f, "The model returned no output.")
             }
         }
     }
 }
-

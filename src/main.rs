@@ -1,19 +1,17 @@
+mod backend;
 mod client;
-mod commands;
 mod context;
+mod dispatch;
+mod domain;
+mod errors;
 mod parser;
 mod settings;
-mod types;
-mod dto;
-mod backend;
-mod errors;
+mod utils;
 
-use commands::init;
 use context::{Context, ContextBuilder};
-use dirs::config_local_dir;
+use domain::Command;
 use settings::Settings;
 use std::path::PathBuf;
-use types::Command;
 
 fn main() {
     let mut context_builder = ContextBuilder::new();
@@ -29,7 +27,7 @@ fn main() {
     ctx.vprint(format_args!("verbose mode is ON"));
     ctx.vprint(format_args!("Built context: {:?}", ctx));
 
-    let config_file_path = get_config_file_path(&ctx);
+    let config_file_path = utils::get_config_file_path(&ctx);
 
     let settings: Settings = settings::load(&config_file_path, Settings::default(), &ctx);
     ctx.vprint(format_args!("Using settings: {:?}", settings));
@@ -37,15 +35,18 @@ fn main() {
     let command: Command = parser::parse_args(&args, &settings.nelson.default_mode);
     ctx.vprint(format_args!("Got command: {:?}", command));
 
-    match command {
-        Command::Wtf => return,
-        Command::InitCmd => return init(&config_file_path, &ctx),
-        Command::NoCommand => return,
-        Command::Prompt(prompt) => {
-            let response = client::query_prompt(&prompt, &settings, &ctx);
-            println!("{:#?}", response);
-        }
+    if ctx.is_help {
+        help(&ctx, &command, &settings, &config_file_path);
+        return;
     }
+
+    match command {
+        Command::WtfCmd(wtf) => return,
+        Command::InitCmd(init) => return dispatch::init(&init, &config_file_path, &ctx),
+        Command::Prompt(_prompt) => {}
+        Command::NoCmd => suggest_help("".to_string()),
+    }
+
     // Parse console args
 
     // Determine custom commands (wtf, init)
@@ -59,17 +60,17 @@ fn main() {
     //
 }
 
-fn get_config_file_path(ctx: &Context) -> PathBuf {
-    config_local_dir()
-        .map(|mut p| {
-            p.push("nelson");
-            p.push("config.toml");
-            p
-        })
-        .unwrap_or_else(|| {
-            ctx.vprint(format_args!(
-                "Couldn't get the config file path, using ./nelson.config.toml"
-            ));
-            PathBuf::from("./nelson.config.toml")
-        })
+fn help(ctx: &Context, command: &Command, settings: &Settings, config_file_path: &PathBuf) {
+    suggest_help(
+        format_args!(
+            "Requested help: {:#?}, {:#?}, {:#?}, {:#?}",
+            ctx, command, settings, config_file_path
+        )
+        .to_string(),
+    );
+}
+
+fn suggest_help(intro: String) {
+    println!("{}", intro);
+    println!("help text here");
 }

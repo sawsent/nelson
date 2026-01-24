@@ -16,7 +16,7 @@ This is a minimal checklist for **only what’s left to complete v0**.
 ## ⬜ Remaining v0 Tasks
 
 ### 1. Settings & Config
-- [ ] Finalize config structure and defaults
+- [x] Finalize config structure and defaults
 - [ ] Ensure config loads correctly from local path
 - [ ] Handle missing config gracefully (suggest running `nelson init`)
 

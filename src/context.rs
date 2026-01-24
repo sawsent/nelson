@@ -4,7 +4,7 @@ use std::fmt::Arguments;
 #[derive(Debug, Clone, Eq, Hash, PartialEq)]
 pub enum Flag {
     Verbose,
-    Help
+    Help,
 }
 
 impl Flag {
@@ -12,7 +12,7 @@ impl Flag {
         match s {
             "--verbose" => Some(Flag::Verbose),
             "--help" | "-h" => Some(Flag::Help),
-            _ => None
+            _ => None,
         }
     }
 }
@@ -42,6 +42,7 @@ impl ContextBuilder {
             full_cmd: self.full_cmd.clone(),
             _flags: self.flags.clone(),
             verbose: self.flags.contains(&Flag::Verbose),
+            is_help: self.flags.contains(&Flag::Help),
         }
     }
 }
@@ -51,6 +52,7 @@ pub struct Context {
     full_cmd: String,
     _flags: HashSet<Flag>,
     verbose: bool,
+    pub is_help: bool,
 }
 
 impl Context {
