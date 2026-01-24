@@ -48,21 +48,4 @@ impl Default for Settings {
     }
 }
 
-pub fn load(fp: &PathBuf, default: Settings, ctx: &Context) -> Settings {
-    match fs::read_to_string(fp) {
-        Ok(contents) => toml::from_str(&contents).unwrap_or_else(|err| {
-            ctx.vprint(format_args!(
-                "nelson: failed to parse config at {:?}. Error: {}. Using default.",
-                fp, err
-            ));
-            default
-        }),
-        Err(e) => {
-            ctx.vprint(format_args!(
-                "Could not access the file at {:?}. Error: {:?}. Using default.",
-                fp, e
-            ));
-            default
-        }
-    }
-}
+
