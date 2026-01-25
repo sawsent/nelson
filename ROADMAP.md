@@ -17,30 +17,41 @@ This is a minimal checklist for **only what’s left to complete v0**.
 
 ### 1. Settings & Config
 - [x] Finalize config structure and defaults
-- [ ] Ensure config loads correctly from local path
-- [ ] Handle missing config gracefully (suggest running `nelson init`)
+- [x] Ensure config loads correctly from local path
+- [x] Handle missing config gracefully (suggest running `nelson init`)
 
 ### 2. Prompt Command Handler
-- [ ] Connect parsed prompt → query backend → output response
-- [ ] Ensure prompt flags override default mode (last flag wins)
-- [ ] Support default mode from config
+- [x] Connect parsed prompt → query backend → output response
+- [x] Ensure prompt flags override default mode (last flag wins)
+- [x] Support default mode from config
 
 ### 3. Error Handling
-- [ ] Add user-friendly errors:
+- [x] Add user-friendly errors:
   - backend unreachable
   - invalid config
   - model not found
   - internal errors
-- [ ] Print helpful guidance in CLI
+- [x] Print helpful guidance in CLI
 
-### 4. Tests
-- [ ] Unit tests for parsing
-- [ ] Unit tests for config loading
-- [ ] Integration test for prompt flow (mocked backend)
+### 4. System prompts
+- [ ] Define system prompt and test
+    - [ ] Code
+    - [ ] Neat
+    - [ ] Long
+    - [ ] Cmd
 
-### 5. README & Documentation
+### 5. Finalize UX
+- [ ] Pretty print LLM response
+- [ ] Prompt for copy
+
+### 5. Tests
+- [ ] Unit tests
+
+### 6. README & Documentation
 - [ ] Update README to match v0 behavior
+- [ ] Test and suggest a model to use 
 - [ ] Include minimal usage examples
+- [ ] Create a release with all binaries (windows, macos, linux)
 
 ---
 

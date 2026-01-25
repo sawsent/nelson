@@ -7,9 +7,9 @@ use crate::utils::save_settings;
 use crate::domain::{Init, Prompt};
 use crate::backend::Backend;
 
-pub fn prompt<T: Backend>(cmd: &Prompt, backend: &T, settings: &Settings, ctx: &Context) {
+pub fn prompt<T: Backend>(cmd: &Prompt, backend: &T, ctx: &Context) {
 
-    let result = backend.query(&"".to_string(), &cmd.prompt, &settings.llm.model, ctx);
+    let result = backend.query(&cmd.prompt, &cmd.mode, ctx);
 
     match result {
         Ok(resp) => println!("{}", resp),

@@ -39,7 +39,7 @@ impl ContextBuilder {
     }
     pub fn build(&self) -> Context {
         Context {
-            full_cmd: self.full_cmd.clone(),
+            _full_cmd: self.full_cmd.clone(),
             _flags: self.flags.clone(),
             verbose: self.flags.contains(&Flag::Verbose),
             is_help: self.flags.contains(&Flag::Help),
@@ -49,7 +49,7 @@ impl ContextBuilder {
 
 #[derive(Debug)]
 pub struct Context {
-    full_cmd: String,
+    _full_cmd: String,
     _flags: HashSet<Flag>,
     verbose: bool,
     pub is_help: bool,
