@@ -6,6 +6,7 @@ mod errors;
 mod parser;
 mod settings;
 mod utils;
+mod printer;
 
 use context::{Context, ContextBuilder};
 use domain::Command;
@@ -31,7 +32,7 @@ fn main() {
     let settings: Settings = utils::load_settings(&config_file_path, Settings::default(), &ctx);
     ctx.vprint(format_args!("Using settings: {:?}", settings));
 
-    let backend = OllamaBackend::new(&settings.backend.host, settings.backend.port, &settings.llm.model);
+    let backend = OllamaBackend::new(&settings.backend.url, &settings.llm.model);
 
     let command: Command = parser::parse_args(&args, &settings.nelson.default_mode);
     ctx.vprint(format_args!("Got command: {:?}", command));

@@ -41,8 +41,9 @@ This is a minimal checklist for **only what’s left to complete v0**.
     - [ ] Cmd
 
 ### 5. Finalize UX
-- [ ] Pretty print LLM response
-- [ ] Prompt for copy
+- [x] Pretty print LLM response
+- [x] Prompt for copy
+- [ ] Helpful help text
 
 ### 5. Tests
 - [ ] Unit tests

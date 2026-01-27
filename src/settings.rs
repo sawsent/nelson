@@ -9,10 +9,13 @@ pub struct Settings {
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
+pub struct AuthSettings {}
+
+#[derive(Debug, Serialize, Deserialize, Clone)]
 pub struct BackendSettings {
     pub provider: String,
-    pub host: String,
-    pub port: u16,
+    pub url: String,
+    pub auth: Option<AuthSettings>
 }
 
 #[derive(Debug, Serialize, Deserialize, Clone)]
@@ -30,8 +33,8 @@ impl Default for Settings {
         Self {
             backend: BackendSettings {
                 provider: "ollama".to_string(),
-                host: "localhost".to_string(),
-                port: 11434,
+                url: "http://localhost:11434/api/chat".to_string(),
+                auth: None
             },
             llm: LlmSettings {
                 model: "llama3.2".to_string(),

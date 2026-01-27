@@ -1,4 +1,4 @@
-use crate::context::Context;
+use crate::context::{Context, Flag};
 use dirs::config_local_dir;
 use std::path::PathBuf;
 use std::fs;

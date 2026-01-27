@@ -1,34 +1,24 @@
-use std::fmt;
-
 pub enum NelsonError {
     Internal(String),
-    BackendUnreachable(String, Option<u16>),
+    BackendUnreachable(String, String),
     Http(u16),
     InvalidResponse(String),
     ModelError(String),
     EmptyResponse,
 }
 
-impl fmt::Display for NelsonError {
-    fn fmt(&self, f: &mut fmt::Formatter<'_>) -> fmt::Result {
+impl std::fmt::Display for NelsonError {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         match self {
             NelsonError::Internal(err) => {
                 write!(f, "Internal nelson error: {}", err)
             }
 
-            NelsonError::BackendUnreachable(host, Some(port)) => {
+            NelsonError::BackendUnreachable(provider, url) => {
                 write!(
                     f,
-                    "Could not connect to Ollama. Is it running at {}:{}?",
-                    host, port
-                )
-            }
-
-            NelsonError::BackendUnreachable(host, None) => {
-                write!(
-                    f,
-                    "Could not connect to Ollama. Is it accessible at {}?",
-                    host
+                    "Could not connect to {}. Is it running at {}?",
+                    provider, url
                 )
             }
 

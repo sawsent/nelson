@@ -1,8 +1,14 @@
 [backend]
 # [ollama]
 provider = "ollama"
-host = "localhost"
-port = 11434
+url = "http://localhost:11434/api/chat"
+
+# Authentication options
+# Leave commented for no auth
+
+# [backend.auth]
+# type = "token",
+# token = ""
 
 [llm]
 model = "llama3.2"

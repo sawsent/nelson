@@ -5,26 +5,25 @@ use crate::domain::Mode;
 use serde::{Deserialize, Serialize};
 
 pub struct OllamaBackend {
-    host: String,
-    port: Option<u16>,
+    url: String,
     model: String
 }
 
 impl OllamaBackend {
-    pub fn new(host: &str, port: u16, model: &str) -> Self {
+    pub fn new(url: &str, model: &str) -> Self {
         Self {
-            host: host.to_string(),
-            port: Some(port),
+            url: url.to_string(),
             model: model.to_string()
         }
     }
 
-    fn get_system_prompt(&self, mode: &Mode) -> String {
-        match mode {
-            Mode::Cmd => "".to_string(),
-            Mode::Neat => "".to_string(),
-            Mode::Long => "".to_string(),
-            Mode::Code => "".to_string()
+    fn get_system_prompt(&self, mode: &Mode, model: &str) -> String {
+        let base = "You are a Unix Command Line expert. You know the normal Unix commands, aswell as all the available tools that have been developed over the years. You are also an experienced developer in the languages Scala, Java, Python, and Bash. ";
+        match (mode, model) {
+            (Mode::Neat, _) => base.to_string() + "You are a concise responder. You always respond in a very concise manner, using concise language.",
+            (Mode::Code, _) => base.to_string() + "You are a programming expert. You know all about Unix commands and the Unix terminal, aswell as all the available tools that have been developed over the years. You also have a very strong understanding of all programming languages. When you get a request for code, you only respond with the code itself needed to do what is asked. Nothing more. No explanations. No comments.",
+            (Mode::Long, _) => base.to_string(),
+            (Mode::Cmd, _) => base.to_string() + "When you get a request for a command, you only respond with the command itself needed to do what is asked. Nothing more. You don't wrap the command in markdown backticks, you simply return the command itself."
         }
     }
 }
@@ -36,19 +35,15 @@ impl Backend for OllamaBackend {
             model: self.model.clone(),
             stream: false,
             messages: vec![
-                OllamaMessage::new("system", &self.get_system_prompt(mode)),
+                OllamaMessage::new("system", &self.get_system_prompt(mode, &self.model)),
                 OllamaMessage::new("user", prompt),
             ],
         };
 
-        let url = self.port
-            .map(|p| format!("http://{}:{}/api/chat", self.host, p))
-            .unwrap_or_else(|| format!("http://{}/api/chat", self.host));
-
-        ctx.vprint(format_args!("Sending payload: {:?}, to url {}", payload, url));
+        ctx.vprint(format_args!("Sending payload: {:?}, to url {}", payload, self.url));
 
         let response = client
-            .post(url)
+            .post(self.url.clone())
             .json(&payload)
             .send();
 
@@ -82,7 +77,7 @@ impl Backend for OllamaBackend {
                 }
             }
             Err(_) => {
-                return Err(NelsonError::BackendUnreachable(self.host.clone(), self.port));
+                return Err(NelsonError::BackendUnreachable("ollama".to_string(), self.url.clone()));
             }
         }
     }
