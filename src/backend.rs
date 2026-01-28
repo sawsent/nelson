@@ -1,7 +1,7 @@
 use crate::context::Context;
 use crate::errors::NelsonError;
 use crate::domain::Mode;
-use crate::settings::{BackendSettings, LlmSettings};
+use crate::settings::{Settings, BackendSettings, LlmSettings};
 use crate::backend::openai::OpenAiBackend;
 use crate::backend::ollama::OllamaBackend;
 
@@ -23,6 +23,11 @@ impl BackendAuth {
 
 pub trait Backend {
     fn query(&self, prompt: &str, mode: &Mode, ctx: &Context) -> Result<String, NelsonError>;
+}
+
+pub fn default_backend() -> Box<dyn Backend> { 
+    let ds = Settings::default();
+    Box::new(OllamaBackend::new(&ds.backend.url, BackendAuth::None, &ds.llm.model))
 }
 
 pub fn backend_from_settings(
