@@ -7,12 +7,12 @@ mod parser;
 mod settings;
 mod utils;
 mod printer;
+mod r#static;
 
 use context::{Context, ContextBuilder};
 use domain::Command;
 use settings::Settings;
 use std::path::PathBuf;
-use crate::backend::ollama::OllamaBackend;
 
 fn main() {
     let mut context_builder = ContextBuilder::new();
@@ -29,10 +29,15 @@ fn main() {
     ctx.vprint(format_args!("Built context: {:?}", ctx));
 
     let config_file_path = utils::get_config_file_path(&ctx);
-    let settings: Settings = utils::load_settings(&config_file_path, Settings::default(), &ctx);
+    let default_settings: Settings = Settings::default();
+    let settings: Settings = utils::load_settings(&config_file_path, default_settings.clone(), &ctx);
     ctx.vprint(format_args!("Using settings: {:?}", settings));
 
-    let backend = OllamaBackend::new(&settings.backend.url, &settings.llm.model);
+    let backend = backend::backend_from_settings(&settings.backend, &settings.llm).unwrap_or_else(|err| {
+        eprintln!("Unable to load backend {}. Use --verbose for full error. Defaulting to {}.", err, default_settings.backend.provider);
+        ctx.vprint(format_args!("{}", err));
+        backend::backend_from_settings(&default_settings.backend, &default_settings.llm).unwrap()
+    });
 
     let command: Command = parser::parse_args(&args, &settings.nelson.default_mode);
     ctx.vprint(format_args!("Got command: {:?}", command));
@@ -60,7 +65,7 @@ fn main() {
     // Print output. If --cmd mode, prompt for copy / execute
     //
     //
-}
+    }
 
 fn help(ctx: &Context, command: &Command, settings: &Settings, config_file_path: &PathBuf) {
     suggest_help(

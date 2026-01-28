@@ -1,3 +1,4 @@
+#[derive(Debug)]
 pub enum NelsonError {
     Internal(String),
     BackendUnreachable(String, String),
@@ -25,14 +26,14 @@ impl std::fmt::Display for NelsonError {
             NelsonError::Http(400) => {
                 write!(
                     f,
-                    "Ollama rejected the request (HTTP 400). Check your model name and configuration."
+                    "Backend rejected the request (HTTP 400). Check your model name and configuration."
                 )
             }
 
             NelsonError::Http(code) => {
                 write!(
                     f,
-                    "Ollama returned an unexpected HTTP error (status {}).",
+                    "Backend returned an unexpected HTTP error (status {}).",
                     code
                 )
             }
@@ -40,7 +41,7 @@ impl std::fmt::Display for NelsonError {
             NelsonError::InvalidResponse(err) => {
                 write!(
                     f,
-                    "Received an invalid response from Ollama. The server may have crashed or returned malformed data. Error: {}",
+                    "Received an invalid response. The server may have crashed or returned malformed data. Error: {}",
                     err
                 )
             }
@@ -48,7 +49,7 @@ impl std::fmt::Display for NelsonError {
             NelsonError::ModelError(err) => {
                 write!(
                     f,
-                    "Model error: {}. Is the model pulled and available?",
+                    "Model error: {}. Is the model available?",
                     err
                 )
             }

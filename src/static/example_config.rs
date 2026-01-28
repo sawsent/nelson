@@ -1,4 +1,5 @@
-[backend]
+pub const CONFIG_STRING: &'static str =
+r#"[backend]
 provider = "ollama"
 url = "http://localhost:11434/api/chat"
 # Uncomment to use authorization  
@@ -21,3 +22,4 @@ model = "llama3.2"
 [nelson]
 # ["cmd", "neat", "long", "code"]
 default_mode = "cmd"
+"#;

@@ -4,13 +4,11 @@ use std::io::{self, Read, Write};
 use arboard::Clipboard;
 
 use crate::context::Context;
-use crate::settings::{Settings};
-use crate::utils::save_settings;
 use crate::domain::{Init, Prompt, Mode};
 use crate::backend::Backend;
 use crate::printer;
 
-pub fn prompt<T: Backend>(cmd: &Prompt, backend: &T, ctx: &Context) {
+pub fn prompt(cmd: &Prompt, backend: &Box<dyn Backend>, ctx: &Context) {
 
     let result = backend.query(&cmd.prompt, &cmd.mode, ctx);
 
@@ -81,11 +79,9 @@ pub fn init(_cmd: &Init, fp: &PathBuf, ctx: &Context) {
         return;
     }
 
-    let settings = Settings::default();
-
     ctx.vprint(format_args!("writing default config file"));
 
-    if let Err(e) = save_settings(&settings, fp, ctx) {
+    if let Err(e) = fs::write(fp, crate::r#static::example_config::CONFIG_STRING) {
         eprintln!(
             "nelson: failed to write config file {:?}: {}",
             fp, e

@@ -5,13 +5,13 @@ use crate::domain::Mode;
 use crate::backend::BackendAuth;
 use serde::{Deserialize, Serialize};
 
-pub struct OllamaBackend {
+pub struct OpenAiBackend {
     url: String,
     auth: BackendAuth,
     model: String
 }
 
-impl OllamaBackend {
+impl OpenAiBackend {
     pub fn new(url: &str, auth: BackendAuth, model: &str) -> Self {
         Self {
             url: url.to_string(),
@@ -31,15 +31,15 @@ impl OllamaBackend {
     }
 }
 
-impl Backend for OllamaBackend {
+impl Backend for OpenAiBackend {
     fn query(&self, prompt: &str, mode: &Mode, ctx: &Context) -> Result<String, NelsonError> {
         let client = reqwest::blocking::Client::new();
-        let payload = OllamaChatRequest {
+        let payload = OpenaiChatRequest {
             model: self.model.clone(),
             stream: false,
             messages: vec![
-                OllamaMessage::new("system", &self.get_system_prompt(mode, &self.model)),
-                OllamaMessage::new("user", prompt),
+                OpenAiMessage::new("system", &self.get_system_prompt(mode, &self.model)),
+                OpenAiMessage::new("user", prompt),
             ],
         };
 
@@ -67,50 +67,71 @@ impl Backend for OllamaBackend {
                     if s == 404 {
                         return Err(NelsonError::ModelError(self.model.clone()));
                     }
+                    ctx.vprint(format_args!("Error response: {:?}", resp));
                     return Err(NelsonError::Http(status.as_u16()));
                 }
 
-                let body: Result<OllamaChatResponse, reqwest::Error> = resp.json();
+                let body: Result<OpenAiChatResponse, reqwest::Error> = resp.json();
 
                 match body {
                     Ok(data) => {
-                        let text = data.message.content;
-                        if text.trim().is_empty() {
-                            return Err(NelsonError::EmptyResponse);
+                        let maybe_text = data.choices.get(0).map(|choice| choice.message.content.clone());
+                        match maybe_text {
+                            None => Err(NelsonError::EmptyResponse),
+                            Some(t) if t.trim().is_empty() => Err(NelsonError::EmptyResponse),
+                            Some(t) => Ok(t)
                         }
-                        return Ok(text);
                     }
                     Err(err) => {
-                        return Err(NelsonError::InvalidResponse(format!("{}", err)));
+                        Err(NelsonError::InvalidResponse(format!("{}", err)))
                     }
                 }
             }
             Err(_) => {
-                return Err(NelsonError::BackendUnreachable("ollama".to_string(), self.url.clone()));
+                Err(NelsonError::BackendUnreachable("ollama".to_string(), self.url.clone()))
             }
         }
     }
 }
 
 #[derive(Debug, Serialize)]
-struct OllamaChatRequest {
+struct OpenaiChatRequest {
     pub model: String,
     pub stream: bool,
-    pub messages: Vec<OllamaMessage>,
-}
-
-#[derive(Debug, Deserialize)]
-struct OllamaChatResponse {
-    pub message: OllamaMessage,
+    pub messages: Vec<OpenAiMessage>,
 }
 
 #[derive(Debug, Serialize, Deserialize)]
-struct OllamaMessage {
+struct OpenAiChatResponse {
+    pub id: String,
+    pub object: String,
+    pub created: u64,
+    pub model: String,
+    pub choices: Vec<OpenAiChatChoice>,
+    pub usage: Option<OpenAiUsage>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct OpenAiChatChoice {
+    pub index: u32,
+    pub message: OpenAiMessage,
+    pub finish_reason: Option<String>,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct OpenAiUsage {
+    pub prompt_tokens: u32,
+    pub completion_tokens: u32,
+    pub total_tokens: u32,
+}
+
+#[derive(Debug, Serialize, Deserialize)]
+struct OpenAiMessage {
     pub role: String,
     pub content: String,
 }
 
-impl OllamaMessage {
+impl OpenAiMessage {
     pub fn new(role: &'static str, content: &str) -> Self {
         Self {
             role: role.to_string(),

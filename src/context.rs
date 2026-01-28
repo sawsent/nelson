@@ -5,6 +5,8 @@ use std::fmt::Arguments;
 pub enum Flag {
     Verbose,
     Help,
+    Provider(String),
+    Model(String)
 }
 
 impl Flag {
@@ -12,7 +14,16 @@ impl Flag {
         match s {
             "--verbose" => Some(Flag::Verbose),
             "--help" | "-h" => Some(Flag::Help),
-            _ => None,
+            _ => Self::indirect_matches(s),
+        }
+    }
+    fn indirect_matches(s: &str) -> Option<Flag> {
+        if let Some(model) = s.strip_prefix("--model=") {
+            Some(Self::Model(model.to_string()))
+        } else if let Some(provider) = s.strip_prefix("--provider=") {
+            Some(Self::Provider(provider.to_string()))
+        } else {
+            None
         }
     }
 }
@@ -40,7 +51,7 @@ impl ContextBuilder {
     pub fn build(&self) -> Context {
         Context {
             _full_cmd: self.full_cmd.clone(),
-            _flags: self.flags.clone(),
+            flags: self.flags.clone(),
             verbose: self.flags.contains(&Flag::Verbose),
             is_help: self.flags.contains(&Flag::Help),
         }
@@ -50,7 +61,7 @@ impl ContextBuilder {
 #[derive(Debug)]
 pub struct Context {
     _full_cmd: String,
-    _flags: HashSet<Flag>,
+    pub flags: HashSet<Flag>,
     verbose: bool,
     pub is_help: bool,
 }
