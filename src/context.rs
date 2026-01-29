@@ -6,7 +6,8 @@ pub enum Flag {
     Verbose,
     Help,
     Provider(String),
-    Model(String)
+    Model(String),
+    Strict
 }
 
 impl Flag {
@@ -14,6 +15,7 @@ impl Flag {
         match s {
             "--verbose" => Some(Flag::Verbose),
             "--help" | "-h" => Some(Flag::Help),
+            "--strict" => Some(Flag::Strict),
             _ => Self::indirect_matches(s),
         }
     }
@@ -53,6 +55,7 @@ impl ContextBuilder {
             _full_cmd: self.full_cmd.clone(),
             flags: self.flags.clone(),
             verbose: self.flags.contains(&Flag::Verbose),
+            strict: self.flags.contains(&Flag::Strict),
             is_help: self.flags.contains(&Flag::Help),
         }
     }
@@ -63,6 +66,7 @@ pub struct Context {
     _full_cmd: String,
     pub flags: HashSet<Flag>,
     verbose: bool,
+    pub strict: bool,
     pub is_help: bool,
 }
 

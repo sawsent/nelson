@@ -3,6 +3,7 @@ use crate::context::Context;
 use crate::errors::NelsonError;
 use crate::domain::Mode;
 use crate::backend::BackendAuth;
+use crate::r#static::system_prompts;
 use serde::{Deserialize, Serialize};
 
 pub struct OpenAiBackend {
@@ -19,16 +20,6 @@ impl OpenAiBackend {
             model: model.to_string()
         }
     }
-
-    fn get_system_prompt(&self, mode: &Mode, model: &str) -> String {
-        let base = "You are a Unix Command Line expert. You know the normal Unix commands, aswell as all the available tools that have been developed over the years. You are also an experienced developer in the languages Scala, Java, Python, and Bash. ";
-        match (mode, model) {
-            (Mode::Neat, _) => base.to_string() + "You are a concise responder. You always respond in a very concise manner, using concise language.",
-            (Mode::Code, _) => base.to_string() + "You are a programming expert. You know all about Unix commands and the Unix terminal, aswell as all the available tools that have been developed over the years. You also have a very strong understanding of all programming languages. When you get a request for code, you only respond with the code itself needed to do what is asked. Nothing more. No explanations. No comments.",
-            (Mode::Long, _) => base.to_string(),
-            (Mode::Cmd, _) => base.to_string() + "When you get a request for a command, you only respond with the command itself needed to do what is asked. Nothing more. You don't wrap the command in markdown backticks, you simply return the command itself."
-        }
-    }
 }
 
 impl Backend for OpenAiBackend {
@@ -38,7 +29,7 @@ impl Backend for OpenAiBackend {
             model: self.model.clone(),
             stream: false,
             messages: vec![
-                OpenAiMessage::new("system", &self.get_system_prompt(mode, &self.model)),
+                OpenAiMessage::new("system", &system_prompts::get_system_prompt(mode, ctx.strict)),
                 OpenAiMessage::new("user", prompt),
             ],
         };

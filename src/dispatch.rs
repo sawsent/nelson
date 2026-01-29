@@ -1,6 +1,6 @@
 use std::fs;
 use std::path::PathBuf;
-use std::io::{self, Read, Write};
+use std::io::{self, Write};
 use arboard::Clipboard;
 
 use crate::context::Context;
@@ -18,26 +18,44 @@ pub fn prompt(cmd: &Prompt, backend: &Box<dyn Backend>, ctx: &Context) {
 
             match cmd.mode {
                 Mode::Cmd => prompt_copy(&resp, ctx),
+                Mode::Code => prompt_copy(&remove_markdown_block(&resp), ctx),
                 _ => ()
             }
         }
         Err(nerr) => println!("{}", nerr)
     }
 }
+
+fn remove_markdown_block(s: &str) -> String {
+    let mut out = Vec::new();
+
+    for line in s.lines() {
+        if !line.trim().starts_with("```") {
+            out.push(line);
+        }
+    }
+
+    out.join("\n")
+}
+
 fn prompt_copy(resp: &str, ctx: &Context) {
-    print!("| [c] Copy | [other] Quit >> ");
+    print!("[Enter] copy | [Other] quit >> ");
     let _ = io::stdout().flush();
-    match read_one() {
-        Ok('c') => {
+    match read_line() {
+        Ok(l) if l.trim().is_empty() => {
             match copy_to_clipboard(&resp) {
-                Ok(_) => println!("Coppied"),
+                Ok(_) => println!("Copied"),
                 Err(err) => {
                     println!("There was an error copying the response.");
                     ctx.vprint(format_args!("{:?}", err));
                 }
             }
         }
-        _ => println!("Not copied")
+        Ok(_) => println!("Not copied"),
+        Err(e) => {
+            ctx.vprint(format_args!("There was an error reading stdin: {:?}", e));
+            println!("Not copied")
+        }
     }
 
 }
@@ -48,10 +66,10 @@ fn copy_to_clipboard(text: &str) -> Result<(), arboard::Error> {
     Ok(())
 }
 
-fn read_one() -> io::Result<char> {
-    let mut buffer = [0; 1];
-    io::stdin().read_exact(&mut buffer)?;
-    Ok(buffer[0] as char)
+fn read_line() -> io::Result<String> {
+    let mut buffer = String::new();
+    io::stdin().read_line(&mut buffer)?;
+    Ok(buffer)
 }
 
 pub fn init(_cmd: &Init, fp: &PathBuf, ctx: &Context) {

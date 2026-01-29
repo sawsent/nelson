@@ -35,8 +35,8 @@ This is a minimal checklist for **only what’s left to complete v0**.
 
 ### 4. OpenAI backend
 Local models can be pretty bad. Implementing an open-ai backend will help me.
-- [ ] OpenAI backend works
-- [ ] Token in config is loaded correctly
+- [x] OpenAI backend works
+- [x] Token in config is loaded correctly
 
 ### 4. System prompts
 - [ ] Define system prompt and test
