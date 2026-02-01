@@ -51,23 +51,11 @@ fn main() {
         Command::WtfCmd(_wtf) => return,
         Command::InitCmd(init) => return dispatch::init(&init, &config_file_path, &ctx),
         Command::Prompt(prompt) => return dispatch::prompt(&prompt, &backend, &ctx),
-        Command::NoCmd => suggest_help("".to_string()),
+        Command::NoCmd => help(&ctx, &command, &settings, &config_file_path),
     }
 }
 
-fn help(ctx: &Context, command: &Command, settings: &Settings, config_file_path: &PathBuf) {
-    suggest_help(
-        format_args!(
-            "Requested help: {:#?}, {:#?}, {:#?}, {:#?}",
-            ctx, command, settings, config_file_path
-        )
-        .to_string(),
-    );
-
+fn help(_ctx: &Context, _command: &Command, _settings: &Settings, _config_file_path: &PathBuf) {
     println!("{}", r#static::help::GENERAL);
 }
 
-fn suggest_help(intro: String) {
-    println!("{}", intro);
-    println!("help text here");
-}
