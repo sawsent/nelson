@@ -1,4 +1,3 @@
-
 # nelson
 
 nelson is a local-first CLI AI assistant that generates shell commands, explains errors, and answers programming questions using a self-hosted LLM.
@@ -34,26 +33,6 @@ nelson move current branch to new-branch --cmd
 
 ---
 
-## Special command
-
-### `nelson wtf`
-
-Explain the last executed command error.
-
-```bash
-nelson wtf
-```
-
-```
-The error you're seeing usually happens due to connectivity issues with the database.
-Consider trying:
-1. ...
-2. ...
-3. ...
-```
-
----
-
 ## Configuration
 
 nelson reads configuration from a file located at:
@@ -65,12 +44,15 @@ nelson reads configuration from a file located at:
 Example:
 
 ```toml
-[llm]
-host = "localhost"
-port = 11434
+[backend]
+provider = "ollama"
+url = "http://localhost:11434/api/chat"
 
-[mode]
-default = "cmd"
+[llm]
+model = "llama3.2"
+
+[nelson]
+default_mode = "cmd"
 ```
 
 ### Initialize the config file

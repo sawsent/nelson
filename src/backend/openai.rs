@@ -24,12 +24,18 @@ impl OpenAiBackend {
 
 impl Backend for OpenAiBackend {
     fn query(&self, prompt: &str, mode: &Mode, ctx: &Context) -> Result<String, NelsonError> {
+        let sys_prompt = if let Some(prompt) = &ctx.sys_prompt_override {
+            prompt.to_string()
+        } else {
+            system_prompts::get_system_prompt(&mode, ctx.strict)
+        };
+
         let client = reqwest::blocking::Client::new();
         let payload = OpenaiChatRequest {
             model: self.model.clone(),
             stream: false,
             messages: vec![
-                OpenAiMessage::new("system", &system_prompts::get_system_prompt(mode, ctx.strict)),
+                OpenAiMessage::new("system", &sys_prompt),
                 OpenAiMessage::new("user", prompt),
             ],
         };

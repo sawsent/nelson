@@ -7,7 +7,8 @@ pub enum Flag {
     Help,
     Provider(String),
     Model(String),
-    Strict
+    Strict,
+    SystemPrompt(String)
 }
 
 impl Flag {
@@ -24,7 +25,9 @@ impl Flag {
             Some(Self::Model(model.to_string()))
         } else if let Some(provider) = s.strip_prefix("--provider=") {
             Some(Self::Provider(provider.to_string()))
-        } else {
+        } else if let Some(prompt) = s.strip_prefix("--system-prompt=") {
+            Some(Self::SystemPrompt(prompt.to_string()))
+        }else {
             None
         }
     }
@@ -33,6 +36,7 @@ impl Flag {
 pub struct ContextBuilder {
     pub full_cmd: String,
     pub flags: HashSet<Flag>,
+    pub sys_prompt_override: Option<String>
 }
 
 impl ContextBuilder {
@@ -40,6 +44,7 @@ impl ContextBuilder {
         Self {
             full_cmd: "".to_string(),
             flags: HashSet::new(),
+            sys_prompt_override: None
         }
     }
     pub fn set_cmd(&mut self, s: &str) {
@@ -48,6 +53,10 @@ impl ContextBuilder {
     pub fn add_flags(&mut self, flags: &HashSet<Flag>) {
         for flag in flags {
             self.flags.insert(flag.to_owned());
+            match flag {
+                Flag::SystemPrompt(p) => self.sys_prompt_override = Some(p.to_string()),
+                _ => {}
+            }
         }
     }
     pub fn build(&self) -> Context {
@@ -57,6 +66,7 @@ impl ContextBuilder {
             verbose: self.flags.contains(&Flag::Verbose),
             strict: self.flags.contains(&Flag::Strict),
             is_help: self.flags.contains(&Flag::Help),
+            sys_prompt_override: self.sys_prompt_override.clone()
         }
     }
 }
@@ -68,6 +78,7 @@ pub struct Context {
     verbose: bool,
     pub strict: bool,
     pub is_help: bool,
+    pub sys_prompt_override: Option<String>
 }
 
 impl Context {

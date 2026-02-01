@@ -24,12 +24,17 @@ impl OllamaBackend {
 
 impl Backend for OllamaBackend {
     fn query(&self, prompt: &str, mode: &Mode, ctx: &Context) -> Result<String, NelsonError> {
+        let sys_prompt = if let Some(prompt) = &ctx.sys_prompt_override {
+            prompt.to_string()
+        } else {
+            system_prompts::get_system_prompt(&mode, ctx.strict)
+        };
         let client = reqwest::blocking::Client::new();
         let payload = OllamaChatRequest {
             model: self.model.clone(),
             stream: false,
             messages: vec![
-                OllamaMessage::new("system", &system_prompts::get_system_prompt(&mode, ctx.strict)),
+                OllamaMessage::new("system", &sys_prompt),
                 OllamaMessage::new("user", prompt),
             ],
         };

@@ -53,19 +53,7 @@ fn main() {
         Command::Prompt(prompt) => return dispatch::prompt(&prompt, &backend, &ctx),
         Command::NoCmd => suggest_help("".to_string()),
     }
-
-    // Parse console args
-
-    // Determine custom commands (wtf, init)
-    //   Delgate if custom to module commands
-    //
-    // Have a clean prompt and mode
-    // Use module client to send the query (ex: fn prompt(mode: Mode, prompt: Prompt))
-    //
-    // Print output. If --cmd mode, prompt for copy / execute
-    //
-    //
-    }
+}
 
 fn help(ctx: &Context, command: &Command, settings: &Settings, config_file_path: &PathBuf) {
     suggest_help(
@@ -75,6 +63,8 @@ fn help(ctx: &Context, command: &Command, settings: &Settings, config_file_path:
         )
         .to_string(),
     );
+
+    println!("{}", r#static::help::GENERAL);
 }
 
 fn suggest_help(intro: String) {
