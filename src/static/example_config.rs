@@ -1,5 +1,4 @@
-pub const CONFIG_STRING: &'static str =
-r#"[backend]
+pub const CONFIG_STRING: &str = r#"[backend]
 provider = "ollama"
 url = "http://localhost:11434/api/chat"
 # Uncomment to use authorization  

@@ -47,11 +47,7 @@ impl std::fmt::Display for NelsonError {
             }
 
             NelsonError::ModelError(err) => {
-                write!(
-                    f,
-                    "Model error: {}. Is the model available?",
-                    err
-                )
+                write!(f, "Model error: {}. Is the model available?", err)
             }
 
             NelsonError::EmptyResponse => {

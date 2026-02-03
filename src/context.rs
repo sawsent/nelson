@@ -5,10 +5,8 @@ use std::fmt::Arguments;
 pub enum Flag {
     Verbose,
     Help,
-    Provider(String),
-    Model(String),
     Strict,
-    SystemPrompt(String)
+    Version,
 }
 
 impl Flag {
@@ -16,19 +14,9 @@ impl Flag {
         match s {
             "--verbose" => Some(Flag::Verbose),
             "--help" | "-h" => Some(Flag::Help),
+            "--version" | "-v" => Some(Flag::Version),
             "--strict" => Some(Flag::Strict),
-            _ => Self::indirect_matches(s),
-        }
-    }
-    fn indirect_matches(s: &str) -> Option<Flag> {
-        if let Some(model) = s.strip_prefix("--model=") {
-            Some(Self::Model(model.to_string()))
-        } else if let Some(provider) = s.strip_prefix("--provider=") {
-            Some(Self::Provider(provider.to_string()))
-        } else if let Some(prompt) = s.strip_prefix("--system-prompt=") {
-            Some(Self::SystemPrompt(prompt.to_string()))
-        }else {
-            None
+            _ => None,
         }
     }
 }
@@ -36,7 +24,6 @@ impl Flag {
 pub struct ContextBuilder {
     pub full_cmd: String,
     pub flags: HashSet<Flag>,
-    pub sys_prompt_override: Option<String>
 }
 
 impl ContextBuilder {
@@ -44,7 +31,6 @@ impl ContextBuilder {
         Self {
             full_cmd: "".to_string(),
             flags: HashSet::new(),
-            sys_prompt_override: None
         }
     }
     pub fn set_cmd(&mut self, s: &str) {
@@ -53,20 +39,16 @@ impl ContextBuilder {
     pub fn add_flags(&mut self, flags: &HashSet<Flag>) {
         for flag in flags {
             self.flags.insert(flag.to_owned());
-            match flag {
-                Flag::SystemPrompt(p) => self.sys_prompt_override = Some(p.to_string()),
-                _ => {}
-            }
         }
     }
     pub fn build(&self) -> Context {
         Context {
             _full_cmd: self.full_cmd.clone(),
-            flags: self.flags.clone(),
+            _flags: self.flags.clone(),
             verbose: self.flags.contains(&Flag::Verbose),
             strict: self.flags.contains(&Flag::Strict),
             is_help: self.flags.contains(&Flag::Help),
-            sys_prompt_override: self.sys_prompt_override.clone()
+            is_version: self.flags.contains(&Flag::Version),
         }
     }
 }
@@ -74,11 +56,11 @@ impl ContextBuilder {
 #[derive(Debug)]
 pub struct Context {
     _full_cmd: String,
-    pub flags: HashSet<Flag>,
+    _flags: HashSet<Flag>,
     verbose: bool,
     pub strict: bool,
     pub is_help: bool,
-    pub sys_prompt_override: Option<String>
+    pub is_version: bool,
 }
 
 impl Context {

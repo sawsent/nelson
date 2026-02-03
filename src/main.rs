@@ -4,10 +4,10 @@ mod dispatch;
 mod domain;
 mod errors;
 mod parser;
-mod settings;
-mod utils;
 mod printer;
+mod settings;
 mod r#static;
+mod utils;
 
 use context::{Context, ContextBuilder};
 use domain::Command;
@@ -30,14 +30,19 @@ fn main() {
 
     let config_file_path = utils::get_config_file_path(&ctx);
     let default_settings: Settings = Settings::default();
-    let settings: Settings = utils::load_settings(&config_file_path, default_settings.clone(), &ctx);
+    let settings: Settings =
+        utils::load_settings(&config_file_path, default_settings.clone(), &ctx);
     ctx.vprint(format_args!("Using settings: {:?}", settings));
 
-    let backend = backend::backend_from_settings(&settings.backend, &settings.llm).unwrap_or_else(|err| {
-        eprintln!("Unable to load backend {}. Use --verbose for full error. Defaulting to {}.", err, default_settings.backend.provider);
-        ctx.vprint(format_args!("{}", err));
-        backend::default_backend()
-    });
+    let backend =
+        backend::backend_from_settings(&settings.backend, &settings.llm).unwrap_or_else(|err| {
+            eprintln!(
+                "Unable to load backend {}. Use --verbose for full error. Defaulting to {}.",
+                err, default_settings.backend.provider
+            );
+            ctx.vprint(format_args!("{}", err));
+            backend::default_backend()
+        });
 
     let command: Command = parser::parse_args(&args, &settings.nelson.default_mode);
     ctx.vprint(format_args!("Got command: {:?}", command));
@@ -47,10 +52,15 @@ fn main() {
         return;
     }
 
+    if ctx.is_version {
+        version();
+        return;
+    }
+
     match command {
-        Command::WtfCmd(_wtf) => return,
-        Command::InitCmd(init) => return dispatch::init(&init, &config_file_path, &ctx),
-        Command::Prompt(prompt) => return dispatch::prompt(&prompt, &backend, &ctx),
+        Command::WtfCmd(_wtf) => (),
+        Command::InitCmd(init) => dispatch::init(&init, &config_file_path, &ctx),
+        Command::Prompt(prompt) => dispatch::prompt(&prompt, &*backend, &ctx),
         Command::NoCmd => help(&ctx, &command, &settings, &config_file_path),
     }
 }
@@ -59,3 +69,6 @@ fn help(_ctx: &Context, _command: &Command, _settings: &Settings, _config_file_p
     println!("{}", r#static::help::GENERAL);
 }
 
+fn version() {
+    println!("{}", r#static::help::VERSION);
+}

@@ -1,7 +1,17 @@
 [package]
-name = "nelson"
-version = "0.1.0"
 edition = "2024"
+name = "nelson"
+version = "0.0.1"
+authors = ["Vicente Figueiredo <vicenteppfigueiredo@gmail.com>"]
+exclude = ["target", "*.rs.bk", ".github",]
+description = "small cli AI assistant that generates shell commands, explains errors, and answers programming questions."
+homepage = "https://github.com/sawsent/nelson"
+documentation = "https://docs.rs/nelson"
+readme = "README.md"
+keywords = ["cli", "llm", "assistant", "shell", "developer-tools"]
+categories = ["command-line-utilities", "development-tools"]
+license = "Apache-2.0"
+repository = "https://github.com/sawsent/nelson"
 
 [dependencies]
 arboard = "3.6.1"

@@ -34,3 +34,4 @@ NOTES:
     - default mode is used when no flag is provided
 "#;
 
+pub const VERSION: &str = "nelson version 0.0.1";

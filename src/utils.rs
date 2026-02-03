@@ -1,8 +1,8 @@
 use crate::context::Context;
-use dirs::config_local_dir;
-use std::path::PathBuf;
-use std::fs;
 use crate::settings::Settings;
+use dirs::config_local_dir;
+use std::fs;
+use std::path::PathBuf;
 
 pub fn get_config_file_path(ctx: &Context) -> PathBuf {
     config_local_dir()
@@ -35,6 +35,5 @@ pub fn load_settings(fp: &PathBuf, default: Settings, ctx: &Context) -> Settings
             ));
             default
         }
-    }.with_flags(&ctx.flags)
+    }
 }
-

@@ -8,4 +8,3 @@ pub fn print_with_bat(text: &str) {
         .paging_mode(bat::PagingMode::Never)
         .print();
 }
-

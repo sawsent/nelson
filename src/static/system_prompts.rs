@@ -5,7 +5,7 @@ pub fn get_system_prompt(mode: &Mode, strict: bool) -> String {
         Mode::Cmd => CMD,
         Mode::Neat => NEAT,
         Mode::Long => LONG,
-        Mode::Code => CODE
+        Mode::Code => CODE,
     };
 
     if strict {
@@ -64,4 +64,3 @@ Do not explain the rules.
 Do not apologize.
 Do not add any extra text beyond what the rules allow.
 "#;
-
