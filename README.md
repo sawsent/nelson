@@ -1,6 +1,24 @@
 # nelson
 
-nelson is a local-first CLI AI assistant that generates shell commands, explains errors, and answers programming questions using a self-hosted LLM.
+nelson is a local-first CLI AI assistant that generates shell commands, explains errors, and answers programming questions using a self-hosted LLM or an openai model.
+
+It currently supports the following backends:
+* ollama
+* openai
+
+---
+
+## Instalation
+Install via cargo
+```bash
+cargo install nelson
+```
+Or build from source:
+```bash
+git clone https://github.com/sawsent/nelson
+cd nelson
+cargo build --release
+```
 
 ---
 
@@ -69,11 +87,7 @@ This creates the default config file (if it doesn't exist) and prints the file p
 
 ## Roadmap
 
-- **v1**: Out of the box experience
-    - [ ] interactive setup
-    - [ ] built-in server management
-    - [ ] automated LLM download and setup
-- **v2**: Customization (tentative)
-    - [ ] multiple LLM backends
-    - [ ] generalized nelson backend (create your own custom adapter to any local or hosted llm)
+- **v0.1.0**: Out of the box experience
+    - [ ] wtf command
+    - [ ] coverage
 
