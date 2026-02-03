@@ -1,3 +1,9 @@
+[![Crates.io](https://img.shields.io/crates/v/nelson)](https://crates.io/crates/nelson)
+[![Crates.io](https://img.shields.io/crates/d/nelson)](https://crates.io/crates/nelson)
+[![License](https://img.shields.io/badge/license-Apache%202.0-blue)](LICENSE)
+[![Build Status](https://img.shields.io/github/actions/workflow/status/sawsent/nelson/rust.yml?branch=main)](https://github.com/sawsent/nelson/actions/workflows/rust.yml?query=branch%3Amain)
+[![Coverage Status](https://codecov.io/gh/sawsent/nelson/branch/main/graph/badge.svg)](https://app.codecov.io/github/sawsent/nelson)
+
 # nelson
 
 nelson is a local-first CLI AI assistant that generates shell commands, explains errors, and answers programming questions using a self-hosted LLM or an openai model.
